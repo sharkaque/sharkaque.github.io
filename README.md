@@ -94,7 +94,7 @@
             font-weight: bold;
         }
         .card .label::before {
-            content: "❤️";
+            content: "💝";
             margin-right: 4px;
         }
         /* 内容区：适配加长卡片 */
@@ -156,7 +156,7 @@
                 这里有一份礼物，确定要打开吗？
             </div>
             <div class="modal-footer">
-                <button class="btn" id="openBtn" onclick="openGift()">确定</button>
+                <button class="btn" onclick="openGift()">确定</button>
             </div>
         </div>
     </div>
@@ -164,8 +164,8 @@
     <button class="add-btn">+</button>
 
     <script>
-        // 20条指定暖心话语
-        const messages = [
+        // 全局挂载核心变量，避免作用域问题
+        window.messages = [
             "金榜题名",
             "你超棒的",
             "我好想你",
@@ -187,48 +187,48 @@
             "我爱你❤️",
             "愿所有美好如期而至"
         ];
-        const cardColors = ["card-pink", "card-blue", "card-yellow", "card-green", "card-purple"];
-        const cardWidth = 280;
-        const cardHeight = 80;
-        let usedIndexes = [];
-        let zIndexCounter = 10;
+        window.cardColors = ["card-pink", "card-blue", "card-yellow", "card-green", "card-purple"];
+        window.cardWidth = 280;
+        window.cardHeight = 80;
+        window.usedIndexes = [];
+        window.zIndexCounter = 10;
 
-        function openGift() {
+        // 全局函数，确保按钮能直接调用
+        window.openGift = function() {
+            // 先关闭弹窗（优先执行，视觉上立即反馈）
             document.getElementById("modal").style.display = "none";
+            // 显示添加按钮
             document.querySelector(".add-btn").style.display = "block";
-            usedIndexes = [];
-            zIndexCounter = 10;
-            // 核心修改：卡片出现间隔固定为100ms，100张卡片10秒内平稳出现
+            // 重置变量
+            window.usedIndexes = [];
+            window.zIndexCounter = 10;
+            // 100张卡片，100ms间隔，平稳生成
             for (let i = 0; i < 100; i++) {
                 setTimeout(() => {
                     createCard(i >= 80);
                 }, i * 100);
             }
-        }
+        };
 
+        // 简化卡片创建函数，提升性能
         function createCard(isNoRepeat) {
             const card = document.createElement("div");
-            const randomColor = cardColors[Math.floor(Math.random() * cardColors.length)];
-            card.className = `card ${randomColor}`;
+            // 随机颜色
+            const colorIdx = Math.floor(Math.random() * window.cardColors.length);
+            card.className = `card ${window.cardColors[colorIdx]}`;
             
-            let randomText;
+            // 随机文字（简化去重逻辑，避免阻塞）
+            let textIdx;
             if (isNoRepeat) {
-                let availableIndexes = messages.map((_, idx) => idx).filter(idx => !usedIndexes.includes(idx));
-                if (availableIndexes.length === 0) {
-                    availableIndexes = messages.map((_, idx) => idx);
-                    usedIndexes = [];
-                }
-                const randomIndex = availableIndexes[Math.floor(Math.random() * availableIndexes.length)];
-                randomText = messages[randomIndex];
-                usedIndexes.push(randomIndex);
+                const available = window.messages.map((_, idx) => idx).filter(idx => !window.usedIndexes.includes(idx));
+                textIdx = available.length ? available[Math.floor(Math.random() * available.length)] : Math.floor(Math.random() * window.messages.length);
+                window.usedIndexes.push(textIdx);
             } else {
-                const randomIndex = Math.floor(Math.random() * messages.length);
-                randomText = messages[randomIndex];
+                textIdx = Math.floor(Math.random() * window.messages.length);
             }
+            const randomText = window.messages[textIdx];
 
-            card.innerHTML = `
-                <div class="label-area">
-                    <div class="label">提示</div>
-                </div>
-                <div class="content-area">${randomText}</div>
-           
+            // 简化HTML结构，减少DOM解析负担
+            card.innerHTML = `<div class="label-area"><div class="label">提示</div></div><div class="content-area">${randomText}</div>`;
+            
+    
