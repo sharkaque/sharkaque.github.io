@@ -156,7 +156,7 @@
                 这里有一份礼物，确定要打开吗？
             </div>
             <div class="modal-footer">
-                <button class="btn" onclick="openGift()">确定</button>
+                <button class="btn" id="confirmBtn">确定</button>
             </div>
         </div>
     </div>
@@ -192,6 +192,11 @@
         window.cardHeight = 80;
         window.usedIndexes = [];
         window.zIndexCounter = 10;
+
+        // 使用事件监听器替代内联onclick
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('confirmBtn').addEventListener('click', openGift);
+        });
 
         // 全局函数，确保按钮能直接调用
         window.openGift = function() {
@@ -231,4 +236,32 @@
             // 简化HTML结构，减少DOM解析负担
             card.innerHTML = `<div class="label-area"><div class="label">提示</div></div><div class="content-area">${randomText}</div>`;
             
-    
+            // 随机位置
+            const maxX = window.innerWidth - window.cardWidth;
+            const maxY = window.innerHeight - window.cardHeight;
+            const randomX = Math.floor(Math.random() * maxX);
+            const randomY = Math.floor(Math.random() * maxY);
+            
+            card.style.left = `${randomX}px`;
+            card.style.top = `${randomY}px`;
+            card.style.zIndex = window.zIndexCounter++;
+            
+            document.body.appendChild(card);
+            
+            // 使用requestAnimationFrame确保动画流畅
+            requestAnimationFrame(() => {
+                card.style.opacity = "1";
+                card.style.transform = "scale(1)";
+            });
+            
+            // 添加点击事件
+            card.addEventListener('click', function() {
+                this.style.transform = "scale(1.05)";
+                setTimeout(() => {
+                    this.style.transform = "scale(1)";
+                }, 150);
+            });
+        }
+    </script>
+</body>
+</html>
