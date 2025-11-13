@@ -3,265 +3,369 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>一份神秘礼物</title>
+    <title>神秘礼物卡片</title>
     <style>
-        body { margin: 0; padding: 20px; background: #f0f2f5; min-height: 100vh; overflow-x: hidden; }
-        /* 弹窗样式 */
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            max-width: 1200px;
             width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        
+        .header {
+            margin-bottom: 40px;
+            padding: 20px;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 14px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(0,0,0,0.15);
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+        }
+        
+        .cards-container {
+            position: relative;
+            min-height: 500px;
+            width: 100%;
+            margin-top: 30px;
+        }
+        
+        .card {
+            width: 280px;
+            border-radius: 16px;
+            position: absolute;
+            opacity: 0;
+            transform: scale(0.1) rotate(-5deg);
+            transition: 
+                opacity 0.8s cubic-bezier(0.34, 1.56, 0.64, 1),
+                transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            overflow: hidden;
+            cursor: pointer;
+        }
+        
+        .card:hover {
+            transform: scale(1.05) !important;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            z-index: 100;
+        }
+        
+        .label-area {
+            padding: 12px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.3);
+        }
+        
+        .label {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            color: #fff;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+        
+        .label::before {
+            content: "💝";
+            margin-right: 8px;
+            font-size: 16px;
+        }
+        
+        .content-area {
+            padding: 20px;
+            font-size: 18px;
+            color: #2c3e50;
+            line-height: 1.6;
+            min-height: 80px;
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 999;
         }
-        .modal-box {
-            background: #fff;
-            border-radius: 8px;
-            width: 85%;
-            max-width: 400px;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-        .modal-header {
-            padding: 12px 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            border-bottom: 1px solid #eee;
-        }
-        .devil-icon {
-            font-size: 20px;
-            color: #a82ee5;
-            background: #f3e5ff;
-            border-radius: 50%;
-            padding: 2px 6px;
-        }
-        .modal-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: #333;
-        }
-        .modal-body {
-            padding: 20px 16px;
-            font-size: 16px;
-            color: #333;
-        }
-        .modal-footer {
-            padding: 12px 16px;
-            text-align: right;
-            border-top: 1px solid #eee;
-        }
-        .btn {
-            padding: 8px 20px;
-            background: #1677ff;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            font-size: 14px;
-            cursor: pointer;
-        }
-        /* 卡片样式：加长到280px + 从小变大动画 */
-        .card {
-            width: 280px;
-            padding: 0;
-            margin: 8px;
-            border-radius: 8px;
-            position: absolute;
-            opacity: 0;
-            transform: scale(0.2); /* 初始缩小到20% */
-            transition: 
-                opacity 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
-                transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-            overflow: hidden;
-        }
-        /* 提示区：适配加长卡片 */
-        .card .label-area {
-            background: var(--label-color);
-            padding: 8px 20px;
-            border-bottom: 1px solid #e0e0e0;
-        }
-        .card .label {
-            display: flex;
-            align-items: center;
-            font-size: 12px;
-            color: #ff4444;
-            font-weight: bold;
-        }
-        .card .label::before {
-            content: "💝";
-            margin-right: 4px;
-        }
-        /* 内容区：适配加长卡片 */
-        .card .content-area {
-            background: var(--content-color);
-            padding: 12px 20px;
-            font-size: 15px;
-            color: #333;
-            line-height: 1.6;
-        }
-        /* 卡片颜色组 */
+        
         .card-pink { 
-            --label-color: #ffe0e0;
-            --content-color: #fff1f0;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
         }
+        
         .card-blue { 
-            --label-color: #d0efff;
-            --content-color: #f0f9ff;
+            background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
         }
+        
         .card-yellow { 
-            --label-color: #ffefd0;
-            --content-color: #fff9f0;
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
         }
+        
         .card-green { 
-            --label-color: #e0ffd0;
-            --content-color: #f7fff0;
+            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
         }
+        
         .card-purple { 
-            --label-color: #efd0ff;
-            --content-color: #f9f0ff;
+            background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%);
         }
-        /* 添加按钮 */
-        .add-btn {
+        
+        .instructions {
+            margin-top: 40px;
+            color: #7f8c8d;
+            font-size: 1rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+            padding: 20px;
+            background: rgba(255,255,255,0.7);
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .counter {
             position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: #ff4444;
-            color: #fff;
-            border: none;
-            font-size: 22px;
-            cursor: pointer;
-            box-shadow: 0 3px 10px rgba(255,68,68,0.2);
-            z-index: 999;
-            display: none;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.9);
+            padding: 10px 20px;
+            border-radius: 50px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            font-weight: bold;
+            color: #2c3e50;
+            z-index: 1000;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 80%;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="modal" id="modal">
-        <div class="modal-box">
-            <div class="modal-header">
-                <span class="devil-icon">👾</span>
-                <span class="modal-title">神秘礼物</span>
-            </div>
-            <div class="modal-body">
-                这里有一份礼物，确定要打开吗？
-            </div>
-            <div class="modal-footer">
-                <button class="btn" id="confirmBtn">确定</button>
-            </div>
+    <div class="container">
+        <div class="header">
+            <h1>神秘礼物卡片</h1>
+            <p class="subtitle">点击下方按钮，生成带有温馨祝福的动画卡片。每张卡片都有独特的消息和漂亮的渐变效果。</p>
+        </div>
+        
+        <div class="controls">
+            <button class="btn btn-primary" id="generateBtn">生成卡片 (120ms间隔)</button>
+            <button class="btn btn-secondary" id="clearBtn">清空卡片</button>
+        </div>
+        
+        <div class="counter">已生成: <span id="cardCount">0</span> 张卡片</div>
+        
+        <div class="cards-container" id="cardsContainer"></div>
+        
+        <div class="instructions">
+            <h3>使用说明</h3>
+            <p>• 点击"生成卡片"按钮开始创建动画卡片</p>
+            <p>• 卡片会以120ms的间隔生成，并带有从小变大的动画效果</p>
+            <p>• 鼠标悬停在卡片上可以查看放大效果</p>
+            <p>• 点击"清空卡片"按钮可以移除所有卡片</p>
         </div>
     </div>
 
-    <button class="add-btn">+</button>
-
     <script>
-        // 全局挂载核心变量，避免作用域问题
-        window.messages = [
-            "金榜题名",
-            "你超棒的",
-            "我好想你",
-            "别太累啦，偶尔偷懒也好",
-            "愿所有烦恼消失",
-            "早点休息",
-            "每天都要元气满满",
-            "保持好心情",
-            "要相信自己奥",
-            "多喝水哦~",
-            "记得好好护肤",
-            "美梦成真",
-            "你最好啦",
-            "顺顺利利",
-            "辛苦啦，今天也超级棒",
-            "别焦虑，一切都会顺顺利利",
-            "别给自己压力，尽力就好",
-            "别emo了，你超值得被爱",
-            "我爱你❤️",
-            "愿所有美好如期而至"
-        ];
-        window.cardColors = ["card-pink", "card-blue", "card-yellow", "card-green", "card-purple"];
-        window.cardWidth = 280;
-        window.cardHeight = 80;
-        window.usedIndexes = [];
-        window.zIndexCounter = 10;
-
-        // 使用事件监听器替代内联onclick
         document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('confirmBtn').addEventListener('click', openGift);
+            const messages = [
+                "金榜题名 🎓",
+                "你超棒的！✨",
+                "我好想你 💖",
+                "别太累啦，偶尔偷懒也好 😴",
+                "愿所有烦恼消失 🌈",
+                "早点休息 🌙",
+                "每天都要元气满满 ☀️",
+                "保持好心情 😊",
+                "要相信自己奥 💪",
+                "多喝水哦~ 💧",
+                "记得好好护肤 🧴",
+                "美梦成真 🌠",
+                "你最好啦 🌸",
+                "顺顺利利 🍀",
+                "辛苦啦，今天也超级棒 👏",
+                "别焦虑，一切都会顺顺利利 🌟",
+                "别给自己压力，尽力就好 🙏",
+                "别emo了，你超值得被爱 💕",
+                "我爱你 ❤️",
+                "愿所有美好如期而至 🎉"
+            ];
+            
+            const cardColors = ["card-pink", "card-blue", "card-yellow", "card-green", "card-purple"];
+            const cardWidth = 280;
+            const cardHeight = 120;
+            let cardCount = 0;
+            let animationInterval;
+            
+            const generateBtn = document.getElementById('generateBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            const cardsContainer = document.getElementById('cardsContainer');
+            const cardCountElement = document.getElementById('cardCount');
+            
+            generateBtn.addEventListener('click', startCardGeneration);
+            clearBtn.addEventListener('click', clearAllCards);
+            
+            function startCardGeneration() {
+                // 先清空现有卡片
+                clearAllCards();
+                
+                // 重置计数器
+                cardCount = 0;
+                updateCounter();
+                
+                // 生成20张卡片，每120ms一张
+                let cardsGenerated = 0;
+                const totalCards = 20;
+                
+                animationInterval = setInterval(() => {
+                    if (cardsGenerated < totalCards) {
+                        createCard();
+                        cardsGenerated++;
+                    } else {
+                        clearInterval(animationInterval);
+                    }
+                }, 120);
+            }
+            
+            function createCard() {
+                const card = document.createElement("div");
+                
+                // 随机颜色和消息
+                const colorIdx = Math.floor(Math.random() * cardColors.length);
+                const textIdx = Math.floor(Math.random() * messages.length);
+                
+                card.className = `card ${cardColors[colorIdx]}`;
+                card.innerHTML = `
+                    <div class="label-area">
+                        <div class="label">温馨祝福</div>
+                    </div>
+                    <div class="content-area">${messages[textIdx]}</div>
+                `;
+                
+                // 随机位置
+                const maxX = window.innerWidth - cardWidth - 40;
+                const maxY = window.innerHeight - cardHeight - 40;
+                const randomX = Math.floor(Math.random() * maxX);
+                const randomY = Math.floor(Math.random() * maxY);
+                
+                card.style.left = `${randomX}px`;
+                card.style.top = `${randomY}px`;
+                
+                cardsContainer.appendChild(card);
+                
+                // 使用setTimeout触发动画
+                setTimeout(() => {
+                    card.style.opacity = "1";
+                    card.style.transform = "scale(1) rotate(0deg)";
+                }, 10);
+                
+                // 更新计数器
+                cardCount++;
+                updateCounter();
+                
+                // 添加点击事件 - 点击卡片可以移除
+                card.addEventListener('click', function() {
+                    this.style.transform = "scale(0.1) rotate(5deg)";
+                    this.style.opacity = "0";
+                    setTimeout(() => {
+                        if (this.parentNode) {
+                            this.parentNode.removeChild(this);
+                            cardCount--;
+                            updateCounter();
+                        }
+                    }, 800);
+                });
+            }
+            
+            function clearAllCards() {
+                if (animationInterval) {
+                    clearInterval(animationInterval);
+                }
+                
+                const cards = document.querySelectorAll('.card');
+                cards.forEach(card => {
+                    card.style.transform = "scale(0.1) rotate(5deg)";
+                    card.style.opacity = "0";
+                });
+                
+                setTimeout(() => {
+                    cardsContainer.innerHTML = '';
+                    cardCount = 0;
+                    updateCounter();
+                }, 800);
+            }
+            
+            function updateCounter() {
+                cardCountElement.textContent = cardCount;
+            }
         });
-
-        // 全局函数，确保按钮能直接调用
-        window.openGift = function() {
-            // 先关闭弹窗（优先执行，视觉上立即反馈）
-            document.getElementById("modal").style.display = "none";
-            // 显示添加按钮
-            document.querySelector(".add-btn").style.display = "block";
-            // 重置变量
-            window.usedIndexes = [];
-            window.zIndexCounter = 10;
-            // 100张卡片，100ms间隔，平稳生成
-            for (let i = 0; i < 100; i++) {
-                setTimeout(() => {
-                    createCard(i >= 80);
-                }, i * 100); // 这里已经是100ms间隔
-            }
-        };
-
-        // 简化卡片创建函数，提升性能
-        function createCard(isNoRepeat) {
-            const card = document.createElement("div");
-            // 随机颜色
-            const colorIdx = Math.floor(Math.random() * window.cardColors.length);
-            card.className = `card ${window.cardColors[colorIdx]}`;
-            
-            // 随机文字（简化去重逻辑，避免阻塞）
-            let textIdx;
-            if (isNoRepeat) {
-                const available = window.messages.map((_, idx) => idx).filter(idx => !window.usedIndexes.includes(idx));
-                textIdx = available.length ? available[Math.floor(Math.random() * available.length)] : Math.floor(Math.random() * window.messages.length);
-                window.usedIndexes.push(textIdx);
-            } else {
-                textIdx = Math.floor(Math.random() * window.messages.length);
-            }
-            const randomText = window.messages[textIdx];
-
-            // 简化HTML结构，减少DOM解析负担
-            card.innerHTML = `<div class="label-area"><div class="label">提示</div></div><div class="content-area">${randomText}</div>`;
-            
-            // 随机位置 - 优化位置计算
-            const maxX = Math.max(0, window.innerWidth - window.cardWidth - 40); // 减去边距
-            const maxY = Math.max(0, window.innerHeight - window.cardHeight - 40);
-            const randomX = Math.floor(Math.random() * maxX);
-            const randomY = Math.floor(Math.random() * maxY);
-            
-            card.style.left = `${randomX}px`;
-            card.style.top = `${randomY}px`;
-            card.style.zIndex = window.zIndexCounter++;
-            
-            document.body.appendChild(card);
-            
-            // 使用requestAnimationFrame确保动画流畅 - 这里已经实现了从小变大的效果
-            requestAnimationFrame(() => {
-                card.style.opacity = "1";
-                card.style.transform = "scale(1)"; // 从scale(0.2)变为scale(1)
-            });
-            
-            // 添加点击事件
-            card.addEventListener('click', function() {
-                this.style.transform = "scale(1.05)";
-                setTimeout(() => {
-                    this.style.transform = "scale(1)";
-                }, 150);
-            });
-        }
     </script>
 </body>
 </html>
