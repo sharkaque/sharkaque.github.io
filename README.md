@@ -164,7 +164,7 @@
     <button class="add-btn">+</button>
 
     <script>
-        // 20条指定暖心话语
+        // 20条指定暖心话语（补充1条，修复索引异常导致点击没效果的问题）
         const messages = [
             "金榜题名",
             "你超棒的",
@@ -184,7 +184,8 @@
             "别焦虑，一切都会顺顺利利",
             "别给自己压力，尽力就好",
             "别emo了，你超值得被爱",
-            "我爱你❤️"
+            "我爱你❤️",
+            "愿所有美好如期而至" // 新增1条，凑够20条，避免最后20张去重时索引报错
         ];
         const cardColors = ["card-pink", "card-blue", "card-yellow", "card-green", "card-purple"];
         const cardWidth = 280;
@@ -198,7 +199,7 @@
             document.querySelector(".add-btn").style.display = "block";
             usedIndexes = [];
             zIndexCounter = 1; // 重置计数器，每次打开都从1开始
-            // 核心修改：卡片出现间隔调整为100ms，100张卡片10秒内全部出现
+            // 卡片出现间隔100ms，100张卡片10秒内全部出现
             for (let i = 0; i < 100; i++) {
                 setTimeout(() => {
                     createCard(i >= 80);
@@ -228,6 +229,4 @@
 
             card.innerHTML = `
                 <div class="label-area">
-                    <div class="label">提示</div>
-                </div>
-                <div class="c
+                    <div class=
