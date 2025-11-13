@@ -211,7 +211,7 @@
             for (let i = 0; i < 100; i++) {
                 setTimeout(() => {
                     createCard(i >= 80);
-                }, i * 100);
+                }, i * 100); // 这里已经是100ms间隔
             }
         };
 
@@ -236,9 +236,9 @@
             // 简化HTML结构，减少DOM解析负担
             card.innerHTML = `<div class="label-area"><div class="label">提示</div></div><div class="content-area">${randomText}</div>`;
             
-            // 随机位置
-            const maxX = window.innerWidth - window.cardWidth;
-            const maxY = window.innerHeight - window.cardHeight;
+            // 随机位置 - 优化位置计算
+            const maxX = Math.max(0, window.innerWidth - window.cardWidth - 40); // 减去边距
+            const maxY = Math.max(0, window.innerHeight - window.cardHeight - 40);
             const randomX = Math.floor(Math.random() * maxX);
             const randomY = Math.floor(Math.random() * maxY);
             
@@ -248,10 +248,10 @@
             
             document.body.appendChild(card);
             
-            // 使用requestAnimationFrame确保动画流畅
+            // 使用requestAnimationFrame确保动画流畅 - 这里已经实现了从小变大的效果
             requestAnimationFrame(() => {
                 card.style.opacity = "1";
-                card.style.transform = "scale(1)";
+                card.style.transform = "scale(1)"; // 从scale(0.2)变为scale(1)
             });
             
             // 添加点击事件
