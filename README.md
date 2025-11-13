@@ -94,7 +94,7 @@
             font-weight: bold;
         }
         .card .label::before {
-            content: "❤️";
+            content: "💝";
             margin-right: 4px;
         }
         /* 内容区：适配加长卡片 */
@@ -164,69 +164,64 @@
     <button class="add-btn">+</button>
 
     <script>
-        // 20条指定暖心话语（补充1条，修复索引异常导致点击没效果的问题）
-        const messages = [
-            "金榜题名",
-            "你超棒的",
-            "我好想你",
-            "别太累啦，偶尔偷懒也好",
-            "愿所有烦恼消失",
-            "早点休息",
-            "每天都要元气满满",
-            "保持好心情",
-            "要相信自己奥",
-            "多喝水哦~",
-            "记得好好护肤",
-            "美梦成真",
-            "你最好啦",
-            "顺顺利利",
-            "辛苦啦，今天也超级棒",
-            "别焦虑，一切都会顺顺利利",
-            "别给自己压力，尽力就好",
-            "别emo了，你超值得被爱",
-            "我爱你❤️",
-            "愿所有美好如期而至" // 新增1条，凑够20条，避免最后20张去重时索引报错
-        ];
-        const cardColors = ["card-pink", "card-blue", "card-yellow", "card-green", "card-purple"];
-        const cardWidth = 280;
-        const cardHeight = 80;
-        
-        let usedIndexes = [];
-        let zIndexCounter = 1; // z-index计数器，递增确保后生成的层级更高
-
-        document.getElementById("openBtn").onclick = function() {
-            document.getElementById("modal").style.display = "none";
-            document.querySelector(".add-btn").style.display = "block";
-            usedIndexes = [];
-            zIndexCounter = 1; // 重置计数器，每次打开都从1开始
-            // 卡片出现间隔100ms，100张卡片10秒内全部出现
-            for (let i = 0; i < 100; i++) {
-                setTimeout(() => {
-                    createCard(i >= 80);
-                }, i * 100);
-            }
-        };
-
-        function createCard(isNoRepeat) {
-            const card = document.createElement("div");
-            const randomColor = cardColors[Math.floor(Math.random() * cardColors.length)];
-            card.className = `card ${randomColor}`;
+        // 等待DOM完全加载后再执行，避免元素未找到导致点击无效
+        document.addEventListener('DOMContentLoaded', function() {
+            // 20条指定暖心话语
+            const messages = [
+                "金榜题名",
+                "你超棒的",
+                "我好想你",
+                "别太累啦，偶尔偷懒也好",
+                "愿所有烦恼消失",
+                "早点休息",
+                "每天都要元气满满",
+                "保持好心情",
+                "要相信自己奥",
+                "多喝水哦~",
+                "记得好好护肤",
+                "美梦成真",
+                "你最好啦",
+                "顺顺利利",
+                "辛苦啦，今天也超级棒",
+                "别焦虑，一切都会顺顺利利",
+                "别给自己压力，尽力就好",
+                "别emo了，你超值得被爱",
+                "我爱你❤️",
+                "愿所有美好如期而至"
+            ];
+            const cardColors = ["card-pink", "card-blue", "card-yellow", "card-green", "card-purple"];
+            const cardWidth = 280;
+            const cardHeight = 80;
             
-            let randomText;
-            if (isNoRepeat) {
-                let availableIndexes = messages.map((_, idx) => idx).filter(idx => !usedIndexes.includes(idx));
-                if (availableIndexes.length === 0) {
-                    availableIndexes = messages.map((_, idx) => idx);
-                    usedIndexes = [];
+            let usedIndexes = [];
+            let zIndexCounter = 10; // 提高初始层级，避免被遮挡
+            
+            // 绑定确定按钮点击事件（确保元素已加载）
+            document.getElementById("openBtn").onclick = function() {
+                document.getElementById("modal").style.display = "none";
+                document.querySelector(".add-btn").style.display = "block";
+                usedIndexes = [];
+                zIndexCounter = 10;
+                // 100张卡片，100ms间隔
+                for (let i = 0; i < 100; i++) {
+                    setTimeout(() => {
+                        createCard(i >= 80);
+                    }, i * 100);
                 }
-                const randomIndex = availableIndexes[Math.floor(Math.random() * availableIndexes.length)];
-                randomText = messages[randomIndex];
-                usedIndexes.push(randomIndex);
-            } else {
-                const randomIndex = Math.floor(Math.random() * messages.length);
-                randomText = messages[randomIndex];
-            }
+            };
 
-            card.innerHTML = `
-                <div class="label-area">
-                    <div class=
+            function createCard(isNoRepeat) {
+                const card = document.createElement("div");
+                const randomColor = cardColors[Math.floor(Math.random() * cardColors.length)];
+                card.className = `card ${randomColor}`;
+                
+                let randomText;
+                if (isNoRepeat) {
+                    let availableIndexes = messages.map((_, idx) => idx).filter(idx => !usedIndexes.includes(idx));
+                    if (availableIndexes.length === 0) {
+                        availableIndexes = messages.map((_, idx) => idx);
+                        usedIndexes = [];
+                    }
+                    const randomIndex = availableIndexes[Math.floor(Math.random() * availableIndexes.length)];
+                    randomText = messages[randomIndex];
+                    usedIndexes.push(r
