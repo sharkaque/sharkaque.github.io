@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>一份神秘礼物</title>
+    <style>
+        body { margin: 0; padding: 20px; background: #f0f2f5; min-height: 100vh; overflow-x: hidden; }
+        /* 弹窗样式 */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+        }
+        .modal-box {
+            background: #fff;
+            border-radius: 8px;
+            width: 85%;
+            max-width: 400px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .modal-header {
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid #eee;
+        }
+        .devil-icon {
+            font-size: 20px;
+            color: #a82ee5;
+            background: #f3e5ff;
+            border-radius: 50%;
+            padding: 2px 6px;
+        }
+        .modal-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+        .modal-body {
+            padding: 20px 16px;
+            font-size: 16px;
+            color: #333;
+        }
+        .modal-footer {
+            padding: 12px 16px;
+            text-align: right;
+            border-top: 1px solid #eee;
+        }
+        .btn {
+            padding: 8px 20px;
+            background: #1677ff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        /* 卡片样式：加长到280px */
+        .card {
+            width: 280px; /* 卡片加长 */
+            padding: 0;
+            margin: 8px;
+            border-radius: 8px;
+            position: absolute;
+            opacity: 0;
+            transform: scale(0.5);
+            transition: opacity 0.4s, transform 0.4s;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        /* 提示区：适配加长卡片 */
+        .card .label-area {
+            background: var(--label-color);
+            padding: 8px 20px; /* 加宽内边距 */
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .card .label {
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+            color: #ff4444;
+            font-weight: bold;
+        }
+        .card .label::before {
+            content: "❤️";
+            margin-right: 4px;
+        }
+        /* 内容区：适配加长卡片 */
+        .card .content-area {
+            background: var(--content-color);
+            padding: 12px 20px; /* 加宽内边距 */
+            font-size: 15px;
+            color: #333;
+            line-height: 1.6;
+        }
+        /* 卡片颜色组 */
+        .card-pink { 
+            --label-color: #ffe0e0;
+            --content-color: #fff1f0;
+        }
+        .card-blue { 
+            --label-color: #d0efff;
+            --content-color: #f0f9ff;
+        }
+        .card-yellow { 
+            --label-color: #ffefd0;
+            --content-color: #fff9f0;
+        }
+        .card-green { 
+            --label-color: #e0ffd0;
+            --content-color: #f7fff0;
+        }
+        .card-purple { 
+            --label-color: #efd0ff;
+            --content-color: #f9f0ff;
+        }
+        /* 添加按钮 */
+        .add-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #ff4444;
+            color: #fff;
+            border: none;
+            font-size: 22px;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(255,68,68,0.2);
+            z-index: 999;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="modal" id="modal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <span class="devil-icon">👾</span>
+                <span class="modal-title">神秘礼物</span>
+            </div>
+            <div class="modal-body">
+                这里有一份礼物，确定要打开吗？
+            </div>
+            <div class="modal-footer">
+                <button class="btn" id="openBtn">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <button class="add-btn">+</button>
+
+    <script>
+        const messages = [
+            // 原有10条祝福语（每条重复3遍）
+            "要相信自己奥", "要相信自己奥", "要相信自己奥",
+            "别熬夜", "别熬夜", "别熬夜",
+            "我想你了", "我想你了", "我想你了",
+            "每天都要元气满满", "每天都要元气满满", "每天都要元气满满",
+            "梦想成真", "梦想成真", "梦想成真",
+            "多喝水哦~", "多喝水哦~", "多喝水哦~",
+            "顺顺利利", "顺顺利利", "顺顺利利",
+            "金榜题名", "金榜题名", "金榜题名",
+            "保持微笑呀", "保持微笑呀", "保持微笑呀",
+            "平安喜乐", "平安喜乐", "平安喜乐",
+            // 指定9条暖心话语（每条重复3遍）
+            "你超棒的", "你超棒的", "你超棒的",
+            "我好想你", "我好想你", "我好想你",
+            "别太累啦，偶尔偷懒也好", "别太累啦，偶尔偷懒也好", "别太累啦，偶尔偷懒也好",
+            "愿所有烦恼消失", "愿所有烦恼消失", "愿所有烦恼消失",
+            "早点休息", "早点休息", "早点休息",
+            "保持好心情", "保持好心情", "保持好心情",
+            "学会爱自己，才能更好的爱别人", "学会爱自己，才能更好的爱别人", "学会爱自己，才能更好的爱别人",
+            // 新增30条暖心话语（每条重复3遍）
+            "你值得所有温柔与美好", "你值得所有温柔与美好", "你值得所有温柔与美好",
+            "辛苦啦，今天也超棒的", "辛苦啦，今天也超棒的", "辛苦啦，今天也超棒的",
+            "烦恼会过去，快乐会降临", "烦恼会过去，快乐会降临", "烦恼会过去，快乐会降临",
+            "愿你被世界温柔以待", "愿你被世界温柔以待", "愿你被世界温柔以待",
+            "照顾好自己，比什么都重要", "照顾好自己，比什么都重要", "照顾好自己，比什么都重要",
+            "开心是一天，要天天开心呀", "开心是一天，要天天开心呀", "开心是一天，要天天开心呀",
+            "你真的很优秀，别怀疑自己", "你真的很优秀，别怀疑自己", "你真的很优秀，别怀疑自己",
+            "累了就歇会儿，不用硬扛", "累了就歇会儿，不用硬扛", "累了就歇会儿，不用硬扛",
+            "生活虽难，但有你就甜", "生活虽难，但有你就甜", "生活虽难，但有你就甜",
+            "愿你每天都有小幸运", "愿你每天都有小幸运", "愿你每天都有小幸运",
+            "微笑面对，一切都会变好", "微笑面对，一切都会变好", "微笑面对，一切都会变好",
+            "你是独一无二的宝藏", "你是独一无二的宝藏", "你是独一无二的宝藏",
+            "慢慢来，你已经很棒了", "慢慢来，你已经很棒了", "慢慢来，你已经很棒了",
+            "愿平安喜乐，常伴左右", "愿平安喜乐，常伴左右", "愿平安喜乐，常伴左右",
+            "别给自己太大压力，尽力就好", "别给自己太大压力，尽力就好", "别给自己太大压力，尽力就好",
+            "天气多变，记得添衣保暖", "天气多变，记得添衣保暖", "天气多变，记得添衣保暖",
+            "简单的幸福，就是最好的生活", "简单的幸福，就是最好的生活", "简单的幸福，就是最好的生活",
+            "你的努力，时光都会看见", "你的努力，时光都会看见", "你的努力，时光都会看见",
+            "愿所有美好，都如期而至", "愿所有美好，都如期而至", "愿所有美好，都如期而至",
+            "有你在，每天都是好日子", "有你在，每天都是好日子", "有你在，每天都是好日子",
+            "别焦虑，一切都会顺顺利利", "别焦虑，一切都会顺顺利利", "别焦虑，一切都会顺顺利利",
+            "爱自己是终身浪漫的开始", "爱自己是终身浪漫的开始", "爱自己是终身浪漫的开始",
+            "愿你无忧无虑，自在如风", "愿你无忧无虑，自在如风", "愿你无忧无虑，自在如风",
+            "今天也要元气满满呀", "今天也要元气满满呀", "今天也要元气满满呀",
+            "你的笑容，能治愈一切不开心", "你的笑容，能治愈一切不开心", "你的笑容，能治愈一切不开心",
+            "坚持下去，你会遇见更好的自己", "坚持下去，你会遇见更好的自己", "坚持下去，你会遇见更好的自己",
+            "愿岁月温柔，善待每一个努力的人", "愿岁月温柔，善待每一个努力的人", "愿岁月温柔，善待每一个努力的人",
+            "平淡的日子里，也要闪闪发光", "平淡的日子里，也要闪闪发光", "平淡的日子里，也要闪闪发光",
+            "别emo啦，你超值得被爱", "别emo啦，你超值得被爱", "别emo啦，你超值得被爱",
+     
