@@ -65,23 +65,25 @@
             font-size: 14px;
             cursor: pointer;
         }
-        /* 卡片样式：加长到280px */
+        /* 卡片样式：加长到280px + 从小变大动画 */
         .card {
-            width: 280px; /* 卡片加长 */
+            width: 280px;
             padding: 0;
             margin: 8px;
             border-radius: 8px;
             position: absolute;
             opacity: 0;
-            transform: scale(0.5);
-            transition: opacity 0.4s, transform 0.4s;
+            transform: scale(0.2); /* 初始缩小到20% */
+            transition: 
+                opacity 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+                transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
             box-shadow: 0 2px 6px rgba(0,0,0,0.08);
             overflow: hidden;
         }
         /* 提示区：适配加长卡片 */
         .card .label-area {
             background: var(--label-color);
-            padding: 8px 20px; /* 加宽内边距 */
+            padding: 8px 20px;
             border-bottom: 1px solid #e0e0e0;
         }
         .card .label {
@@ -98,7 +100,7 @@
         /* 内容区：适配加长卡片 */
         .card .content-area {
             background: var(--content-color);
-            padding: 12px 20px; /* 加宽内边距 */
+            padding: 12px 20px;
             font-size: 15px;
             color: #333;
             line-height: 1.6;
@@ -162,103 +164,70 @@
     <button class="add-btn">+</button>
 
     <script>
+        // 20条指定暖心话语
         const messages = [
-            // 原有10条祝福语（每条重复3遍）
-            "要相信自己奥", "要相信自己奥", "要相信自己奥",
-            "别熬夜", "别熬夜", "别熬夜",
-            "我想你了", "我想你了", "我想你了",
-            "每天都要元气满满", "每天都要元气满满", "每天都要元气满满",
-            "梦想成真", "梦想成真", "梦想成真",
-            "多喝水哦~", "多喝水哦~", "多喝水哦~",
-            "顺顺利利", "顺顺利利", "顺顺利利",
-            "金榜题名", "金榜题名", "金榜题名",
-            "保持微笑呀", "保持微笑呀", "保持微笑呀",
-            "平安喜乐", "平安喜乐", "平安喜乐",
-            // 指定9条暖心话语（每条重复3遍）
-            "你超棒的", "你超棒的", "你超棒的",
-            "我好想你", "我好想你", "我好想你",
-            "别太累啦，偶尔偷懒也好", "别太累啦，偶尔偷懒也好", "别太累啦，偶尔偷懒也好",
-            "愿所有烦恼消失", "愿所有烦恼消失", "愿所有烦恼消失",
-            "早点休息", "早点休息", "早点休息",
-            "保持好心情", "保持好心情", "保持好心情",
-            "学会爱自己，才能更好的爱别人", "学会爱自己，才能更好的爱别人", "学会爱自己，才能更好的爱别人",
-            // 新增30条暖心话语（每条重复3遍）
-            "你值得所有温柔与美好", "你值得所有温柔与美好", "你值得所有温柔与美好",
-            "辛苦啦，今天也超棒的", "辛苦啦，今天也超棒的", "辛苦啦，今天也超棒的",
-            "烦恼会过去，快乐会降临", "烦恼会过去，快乐会降临", "烦恼会过去，快乐会降临",
-            "愿你被世界温柔以待", "愿你被世界温柔以待", "愿你被世界温柔以待",
-            "照顾好自己，比什么都重要", "照顾好自己，比什么都重要", "照顾好自己，比什么都重要",
-            "开心是一天，要天天开心呀", "开心是一天，要天天开心呀", "开心是一天，要天天开心呀",
-            "你真的很优秀，别怀疑自己", "你真的很优秀，别怀疑自己", "你真的很优秀，别怀疑自己",
-            "累了就歇会儿，不用硬扛", "累了就歇会儿，不用硬扛", "累了就歇会儿，不用硬扛",
-            "生活虽难，但有你就甜", "生活虽难，但有你就甜", "生活虽难，但有你就甜",
-            "愿你每天都有小幸运", "愿你每天都有小幸运", "愿你每天都有小幸运",
-            "微笑面对，一切都会变好", "微笑面对，一切都会变好", "微笑面对，一切都会变好",
-            "你是独一无二的宝藏", "你是独一无二的宝藏", "你是独一无二的宝藏",
-            "慢慢来，你已经很棒了", "慢慢来，你已经很棒了", "慢慢来，你已经很棒了",
-            "愿平安喜乐，常伴左右", "愿平安喜乐，常伴左右", "愿平安喜乐，常伴左右",
-            "别给自己太大压力，尽力就好", "别给自己太大压力，尽力就好", "别给自己太大压力，尽力就好",
-            "天气多变，记得添衣保暖", "天气多变，记得添衣保暖", "天气多变，记得添衣保暖",
-            "简单的幸福，就是最好的生活", "简单的幸福，就是最好的生活", "简单的幸福，就是最好的生活",
-            "你的努力，时光都会看见", "你的努力，时光都会看见", "你的努力，时光都会看见",
-            "愿所有美好，都如期而至", "愿所有美好，都如期而至", "愿所有美好，都如期而至",
-            "有你在，每天都是好日子", "有你在，每天都是好日子", "有你在，每天都是好日子",
-            "别焦虑，一切都会顺顺利利", "别焦虑，一切都会顺顺利利", "别焦虑，一切都会顺顺利利",
-            "爱自己是终身浪漫的开始", "爱自己是终身浪漫的开始", "爱自己是终身浪漫的开始",
-            "愿你无忧无虑，自在如风", "愿你无忧无虑，自在如风", "愿你无忧无虑，自在如风",
-            "今天也要元气满满呀", "今天也要元气满满呀", "今天也要元气满满呀",
-            "你的笑容，能治愈一切不开心", "你的笑容，能治愈一切不开心", "你的笑容，能治愈一切不开心",
-            "坚持下去，你会遇见更好的自己", "坚持下去，你会遇见更好的自己", "坚持下去，你会遇见更好的自己",
-            "愿岁月温柔，善待每一个努力的人", "愿岁月温柔，善待每一个努力的人", "愿岁月温柔，善待每一个努力的人",
-            "平淡的日子里，也要闪闪发光", "平淡的日子里，也要闪闪发光", "平淡的日子里，也要闪闪发光",
-            "别emo啦，你超值得被爱", "别emo啦，你超值得被爱", "别emo啦，你超值得被爱",
-            "愿你三餐四季，温暖有趣", "愿你三餐四季，温暖有趣", "愿你三餐四季，温暖有趣",
-            "身边有良人，心中有热爱", "身边有良人，心中有热爱", "身边有良人，心中有热爱"
+            "金榜题名",
+            "你超棒的",
+            "我好想你",
+            "别太累啦，偶尔偷懒也好",
+            "愿所有烦恼消失",
+            "早点休息",
+            "每天都要元气满满",
+            "保持好心情",
+            "要相信自己奥",
+            "多喝水哦~",
+            "记得好好护肤",
+            "美梦成真",
+            "你最好啦",
+            "顺顺利利",
+            "辛苦啦，今天也超级棒",
+            "别焦虑，一切都会顺顺利利",
+            "别给自己压力，尽力就好",
+            "别emo了，你超值得被爱",
+            "我爱你❤️"
         ];
         const cardColors = ["card-pink", "card-blue", "card-yellow", "card-green", "card-purple"];
-        const cardWidth = 280; /* 同步加长卡片宽度变量 */
+        const cardWidth = 280;
         const cardHeight = 80;
+        
+        let usedIndexes = [];
+        let zIndexCounter = 1; // z-index计数器，递增确保后生成的层级更高
 
         document.getElementById("openBtn").onclick = function() {
             document.getElementById("modal").style.display = "none";
             document.querySelector(".add-btn").style.display = "block";
-            // 初始生成18张卡片，适配加长尺寸
-            for (let i = 0; i < 18; i++) {
+            usedIndexes = [];
+            zIndexCounter = 1; // 重置计数器，每次打开都从1开始
+            // 核心修改：卡片出现间隔调整为100ms，100张卡片10秒内全部出现
+            for (let i = 0; i < 100; i++) {
                 setTimeout(() => {
-                    createCard();
-                }, i * 150);
+                    createCard(i >= 80);
+                }, i * 100);
             }
         };
 
-        function createCard() {
+        function createCard(isNoRepeat) {
             const card = document.createElement("div");
             const randomColor = cardColors[Math.floor(Math.random() * cardColors.length)];
             card.className = `card ${randomColor}`;
-            // 随机选取话语，实现完全随机显示
-            const randomText = messages[Math.floor(Math.random() * messages.length)];
+            
+            let randomText;
+            if (isNoRepeat) {
+                let availableIndexes = messages.map((_, idx) => idx).filter(idx => !usedIndexes.includes(idx));
+                if (availableIndexes.length === 0) {
+                    availableIndexes = messages.map((_, idx) => idx);
+                    usedIndexes = [];
+                }
+                const randomIndex = availableIndexes[Math.floor(Math.random() * availableIndexes.length)];
+                randomText = messages[randomIndex];
+                usedIndexes.push(randomIndex);
+            } else {
+                const randomIndex = Math.floor(Math.random() * messages.length);
+                randomText = messages[randomIndex];
+            }
+
             card.innerHTML = `
                 <div class="label-area">
                     <div class="label">提示</div>
                 </div>
-                <div class="content-area">${randomText}</div>
-            `;
-            
-            const maxX = window.innerWidth - cardWidth - 20;
-            const maxY = window.innerHeight - cardHeight - 20;
-            card.style.left = `${20 + Math.random() * maxX}px`;
-            card.style.top = `${20 + Math.random() * maxY}px`;
-            card.style.zIndex = Math.floor(Math.random() * 10);
-            
-            document.body.appendChild(card);
-            setTimeout(() => {
-                card.style.opacity = "1";
-                card.style.transform = "scale(1)";
-            }, 50);
-        }
-
-        document.querySelector(".add-btn").onclick = function() {
-            createCard();
-        };
-    </script>
-</body>
-</html>
+                <div class="c
