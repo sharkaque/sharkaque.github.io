@@ -65,7 +65,7 @@
             font-size: 14px;
             cursor: pointer;
         }
-        /* 卡片样式：加长到280px + 从小变大动画 - 修改动画时间为0.8s */
+        /* 卡片样式：修复移动端动画问题 */
         .card {
             width: 280px;
             padding: 0;
@@ -75,10 +75,16 @@
             opacity: 0;
             transform: scale(0.2); /* 初始缩小到20% */
             transition: 
-                opacity 0.8s cubic-bezier(0.34, 1.56, 0.64, 1),
-                transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+                opacity 1.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+                transform 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
             box-shadow: 0 2px 6px rgba(0,0,0,0.08);
             overflow: hidden;
+            /* 添加GPU加速 */
+            will-change: transform, opacity;
+            /* 修复移动端渲染 */
+            -webkit-transform: scale(0.2);
+            -webkit-transition: opacity 1.2s cubic-bezier(0.34, 1.56, 0.64, 1), 
+                              -webkit-transform 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         /* 提示区：适配加长卡片 */
         .card .label-area {
@@ -207,15 +213,15 @@
             // 重置变量
             window.usedIndexes = [];
             window.zIndexCounter = 10;
-            // 100张卡片，120ms间隔，平稳生成
+            // 100张卡片，150ms间隔，平稳生成
             for (let i = 0; i < 100; i++) {
                 setTimeout(() => {
                     createCard(i >= 80);
-                }, i * 120); // 修改为120ms间隔
+                }, i * 150); // 150ms间隔
             }
         };
 
-        // 简化卡片创建函数，提升性能
+        // 修复移动端卡片创建函数
         function createCard(isNoRepeat) {
             const card = document.createElement("div");
             // 随机颜色
@@ -236,9 +242,9 @@
             // 简化HTML结构，减少DOM解析负担
             card.innerHTML = `<div class="label-area"><div class="label">提示</div></div><div class="content-area">${randomText}</div>`;
             
-            // 随机位置 - 优化位置计算
-            const maxX = Math.max(0, window.innerWidth - window.cardWidth - 40); // 减去边距
-            const maxY = Math.max(0, window.innerHeight - window.cardHeight - 40);
+            // 随机位置 - 优化移动端位置计算
+            const maxX = Math.max(0, window.innerWidth - window.cardWidth - 20);
+            const maxY = Math.max(0, window.innerHeight - window.cardHeight - 20);
             const randomX = Math.floor(Math.random() * maxX);
             const randomY = Math.floor(Math.random() * maxY);
             
@@ -248,20 +254,31 @@
             
             document.body.appendChild(card);
             
-            // 使用requestAnimationFrame确保动画流畅 - 这里已经实现了从小变大的效果
+            // 修复移动端动画 - 强制重绘
+            void card.offsetWidth; // 触发重绘
+            
+            // 使用双requestAnimationFrame确保动画触发
             requestAnimationFrame(() => {
-                card.style.opacity = "1";
-                card.style.transform = "scale(1)"; // 从scale(0.2)变为scale(1)
+                requestAnimationFrame(() => {
+                    card.style.opacity = "1";
+                    card.style.transform = "scale(1)";
+                    card.style.webkitTransform = "scale(1)"; // iOS Safari
+                });
             });
             
             // 添加点击事件
             card.addEventListener('click', function() {
                 this.style.transform = "scale(1.05)";
+                this.style.webkitTransform = "scale(1.05)";
                 setTimeout(() => {
                     this.style.transform = "scale(1)";
+                    this.style.webkitTransform = "scale(1)";
                 }, 150);
             });
         }
+        
+        // 防止移动端双击缩放
+        document.addEventListener('touchstart', function() {}, {passive: true});
     </script>
 </body>
 </html>
